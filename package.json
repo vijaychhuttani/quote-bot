@@ -1,0 +1,25 @@
+{
+  "name": "quote-bot",
+  "version": "0.1.0",
+  "description": "Facebook Messenger Bot that returns quotes for keywords sent by user to the bot.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "BOT",
+    "FACEBOOK",
+    "M",
+    "QUOTES",
+    "CHAT",
+    "CHAT",
+    "BOT"
+  ],
+  "author": "vijay chhuttani",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^0.20.0",
+    "express": "^4.13.4",
+    "request": "^2.71.0"
+  }
+}
