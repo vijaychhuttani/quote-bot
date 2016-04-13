@@ -7,6 +7,13 @@ var PORT = process.env.PORT || 3000;
 
 //ROUTES
 
+app.get('/webhook/', function (req, res) {
+  if (req.query['hub.verify_token'] === '***REMOVED***') {
+    res.send(req.query['hub.challenge']);
+  }
+  res.send('Error, wrong validation token');
+});
+
 app.get('/quotes/:keyword', function(req, res) {
 	if(typeof req.params.keyword !== 'undefined' && null !== req.params.keyword){
 		getRandomQuote(req.params.keyword, function(data){
