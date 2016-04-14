@@ -14,6 +14,7 @@ app.get('/webhook/', function (req, res) {
 });
 
 app.post('/webhook/', function (req, res) {
+	console.log(req);
 	if(typeof req.body !== 'undefined' && req.body !== null){
 		console.log("VIJAY TEST - " + req.body.entry);
 	  messaging_events = req.body.entry[0].messaging;
