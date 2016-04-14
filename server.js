@@ -5,6 +5,9 @@ var bodyParser = require('body-parser');
 
 var app = express();
 var PORT = process.env.PORT || 3000;
+var token = '***REMOVED***'
+	+'***REMOVED***'
+	+'***REMOVED***';
 
 app.use(bodyParser.json()); 
 app.use(bodyParser.urlencoded({ extended: true })); 
@@ -17,17 +20,18 @@ app.get('/webhook/', function (req, res) {
   res.send('Error, wrong validation token');
 });
 
+
 app.post('/webhook/', function (req, res) {
-	console.log(req);
 	if(typeof req.body !== 'undefined' && req.body !== null){
-		//console.log("VIJAY TEST - " + req.body.entry);
 	  messaging_events = req.body.entry[0].messaging;
 	  for (i = 0; i < messaging_events.length; i++) {
 	    event = req.body.entry[0].messaging[i];
 	    sender = event.sender.id;
 	    if (event.message && event.message.text) {
-	      text = event.message.text;
-	      console.log(sender + ': ' + text);
+	      keyword = event.message.text;
+	      getRandomQuote(keyword, function(return_message){
+	      	sendTextMessage(sender, return_message);
+	      });
 	    }
 	  }
 	} else {
@@ -36,11 +40,9 @@ app.post('/webhook/', function (req, res) {
 	res.sendStatus(200);
 });
 
+
 app.get('/init', function(req, res){
-	var url = 'https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=' 
-	+'***REMOVED***'
-	+'***REMOVED***'
-	+'***REMOVED***';
+	var url = 'https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=' + token;
 	request(url, function(error, response, body){
 		if(!error){
 			res.send(body);
@@ -49,6 +51,7 @@ app.get('/init', function(req, res){
 		}
 	});
 });
+
 
 app.get('/quotes/:keyword', function(req, res) {
 	if(typeof req.params.keyword !== 'undefined' && null !== req.params.keyword){
@@ -100,6 +103,28 @@ function getRandomQuote(keyword, callback) {
 	  	callback("Error 500 : Some error occured, please try later.");
 	  }
 	});
+}
+
+
+function sendTextMessage(sender, text) {
+  messageData = {
+    text:text
+  }
+  request({
+    url: 'https://graph.facebook.com/v2.6/me/messages',
+    qs: {access_token:token},
+    method: 'POST',
+    json: {
+      recipient: {id:sender},
+      message: messageData,
+    }
+  }, function(error, response, body) {
+    if (error) {
+      console.log('Error sending message: ', error);
+    } else if (response.body.error) {
+      console.log('Error: ', response.body.error);
+    }
+  });
 }
 
 
