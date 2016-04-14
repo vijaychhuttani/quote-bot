@@ -8,6 +8,7 @@ var PORT = process.env.PORT || 3000;
 //ROUTES
 
 app.post('/webhook/', function (req, res) {
+	console.log("VIJAY TEST - " + req.body.entry);
   messaging_events = req.body.entry[0].messaging;
   for (i = 0; i < messaging_events.length; i++) {
     event = req.body.entry[0].messaging[i];
