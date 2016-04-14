@@ -27,6 +27,19 @@ app.post('/webhook/', function (req, res) {
   res.sendStatus(200);
 });
 
+app.get('/init', function(req, res)){
+	var url = 'https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=' 
+	+'***REMOVED***'
+	+'***REMOVED***'
+	+'***REMOVED***';
+	request(url, function(error, response, body){
+		if(!error){
+			res.send(body);
+		}
+		res.send(error);
+	});
+}
+
 app.get('/quotes/:keyword', function(req, res) {
 	if(typeof req.params.keyword !== 'undefined' && null !== req.params.keyword){
 		getRandomQuote(req.params.keyword, function(data){
