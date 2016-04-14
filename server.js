@@ -50,7 +50,7 @@ app.get('/quotes/:keyword', function(req, res) {
 	if(typeof req.params.keyword !== 'undefined' && null !== req.params.keyword){
 		getRandomQuote(req.params.keyword, function(data){
 			if(data !== '404') {
-				res.status(200).send(data);
+				res.status(200).send("<h2>"+data+"</h2>");
 			} else {
 				res.send("Oops!! I do not know any quote having keyword(s) '" 
 					+ req.params.keyword 
