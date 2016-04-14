@@ -35,8 +35,9 @@ app.get('/init', function(req, res){
 	request(url, function(error, response, body){
 		if(!error){
 			res.send(body);
+		} else {
+			res.send(error);
 		}
-		res.send(error);
 	});
 });
 
