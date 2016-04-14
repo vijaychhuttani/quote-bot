@@ -76,19 +76,21 @@ function getRandomQuote(keyword, callback) {
 	var pageNum = Math.floor(Math.random() * (10)) + 1;
 	var url = 'http://www.brainyquote.com/search_results.html?q=' + keyword + '&pg=' + pageNum;
 	var quotes = [];
+	var authors = [];
 	request(url, function (error, response, body) {
 	  if (!error && response.statusCode == 200) {
 	    var $ = cheerio.load(response.body);
 		$('.bqQuoteLink').each(function(i, elem) {
 			quotes[i] = $(this).find('a').text();
+			authors[i] = $(this).parent('.boxyPaddingBig').find('.bq-aut').find('a').text() || 'unknown';
 		});
 		if(quotes.length === 0) {
 			callback("404");
 		}
 		var quoteNum = Math.floor(Math.random() * (quotes.length));
 		console.log("URL: " + url + " ---> QuoteNumber: " + quoteNum);
-		console.log("Quote: " + quotes[quoteNum]);
-		callback(quotes[quoteNum]);
+		console.log("Quote: " + quotes[quoteNum].replace("  " , " ") + '" - ' + authors[quoteNum]);
+		callback('"' + quotes[quoteNum].replace("  " , " ") + '" - ' + authors[quoteNum]);
 	  } else {
 	  	callback("Error 500 : Some error occured, please try later.");
 	  }
