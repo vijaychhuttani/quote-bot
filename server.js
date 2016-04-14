@@ -1,9 +1,13 @@
 var express = require('express');
 var request = require('request');
 var cheerio = require('cheerio');
+var bodyParser = require('body-parser');
 
 var app = express();
 var PORT = process.env.PORT || 3000;
+
+app.use(bodyParser.json()); 
+app.use(bodyParser.urlencoded({ extended: true })); 
 
 //ROUTES
 app.get('/webhook/', function (req, res) {
@@ -84,13 +88,14 @@ function getRandomQuote(keyword, callback) {
 			quotes[i] = $(this).find('a').text();
 			authors[i] = $(this).parent('.boxyPaddingBig').find('.bq-aut').find('a').text() || 'unknown';
 		});
-		if(quotes.length === 0) {
+		if(quotes.length === 0 || typeof quotes === 'undefined') {
 			callback("404");
+		} else {
+			var quoteNum = Math.floor(Math.random() * (quotes.length));
+			console.log("URL: " + url + " ---> QuoteNumber: " + quoteNum);
+			console.log("Quote: " + quotes[quoteNum].replace("  " , " ") + '" - ' + authors[quoteNum]);
+			callback('"' + quotes[quoteNum].replace("  " , " ") + '" - ' + authors[quoteNum]);
 		}
-		var quoteNum = Math.floor(Math.random() * (quotes.length));
-		console.log("URL: " + url + " ---> QuoteNumber: " + quoteNum);
-		console.log("Quote: " + quotes[quoteNum].replace("  " , " ") + '" - ' + authors[quoteNum]);
-		callback('"' + quotes[quoteNum].replace("  " , " ") + '" - ' + authors[quoteNum]);
 	  } else {
 	  	callback("Error 500 : Some error occured, please try later.");
 	  }
