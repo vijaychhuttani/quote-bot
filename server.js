@@ -27,7 +27,7 @@ app.post('/webhook/', function (req, res) {
   res.sendStatus(200);
 });
 
-app.get('/init', function(req, res)){
+app.get('/init', function(req, res){
 	var url = 'https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=' 
 	+'***REMOVED***'
 	+'***REMOVED***'
@@ -38,7 +38,7 @@ app.get('/init', function(req, res)){
 		}
 		res.send(error);
 	});
-}
+});
 
 app.get('/quotes/:keyword', function(req, res) {
 	if(typeof req.params.keyword !== 'undefined' && null !== req.params.keyword){
