@@ -29,9 +29,14 @@ app.post('/webhook/', function (req, res) {
 	    sender = event.sender.id;
 	    if (event.message && event.message.text) {
 	      keyword = event.message.text;
-	      getRandomQuote(keyword, function(return_message){
-	      	sendTextMessage(sender, return_message);
-	      });
+	      if(keyword !== null && typeof keyword !== 'undefined'){
+	      	console.log("Keyword Searched: " + keyword);
+	      	getRandomQuote(keyword, function(return_message){
+		      sendTextMessage(sender, return_message);
+		    });
+	      } else {
+	      	 sendTextMessage(sender, "Did you enter anything?? Please resend!!");
+	      }
 	    }
 	  }
 	} else {
@@ -56,14 +61,7 @@ app.get('/init', function(req, res){
 app.get('/quotes/:keyword', function(req, res) {
 	if(typeof req.params.keyword !== 'undefined' && null !== req.params.keyword){
 		getRandomQuote(req.params.keyword, function(data){
-			if(data !== '404') {
-				res.status(200).send("<h2>"+data+"</h2>");
-			} else {
-				res.send("Oops!! I do not know any quote having keyword(s) '" 
-					+ req.params.keyword 
-					+ "', Let's try something else!");
-			}
-			
+				res.send("<h2>"+data+"</h2>");
 		});
 	} else {
 		res.send("Invalid Keyword");
@@ -80,6 +78,9 @@ app.listen(PORT, function() {
 //UTILITY FUNCTIONS
 
 function getRandomQuote(keyword, callback) {
+	if(keyword !== null && typeof keyword !== 'undefined'){
+	  keyword = keyword.replace(" ", "+");
+	}
 	var pageNum = Math.floor(Math.random() * (10)) + 1;
 	var url = 'http://www.brainyquote.com/search_results.html?q=' + keyword + '&pg=' + pageNum;
 	var quotes = [];
@@ -87,12 +88,21 @@ function getRandomQuote(keyword, callback) {
 	request(url, function (error, response, body) {
 	  if (!error && response.statusCode == 200) {
 	    var $ = cheerio.load(response.body);
+	    var j = 0;
 		$('.bqQuoteLink').each(function(i, elem) {
-			quotes[i] = $(this).find('a').text();
-			authors[i] = $(this).parent('.boxyPaddingBig').find('.bq-aut').find('a').text() || 'unknown';
+			var quote = $(this).find('a').text();
+			var author = $(this).parent('.boxyPaddingBig').find('.bq-aut').find('a').text() || 'Unknown';
+			if(('"' + quote + '" - ' + author).length <= 320){
+				quotes[j] = quote;
+				authors[j] = author;
+				j++;
+			}
 		});
 		if(quotes.length === 0 || typeof quotes === 'undefined') {
-			callback("404");
+			keyword = keyword.replace("+", " & ");
+			callback("Oops!! I do not know any quote having keyword(s) '" 
+					+ keyword 
+					+ "', Let's try something else!");
 		} else {
 			var quoteNum = Math.floor(Math.random() * (quotes.length));
 			console.log("URL: " + url + " ---> QuoteNumber: " + quoteNum);
