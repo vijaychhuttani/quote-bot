@@ -5,16 +5,14 @@ var bodyParser = require('body-parser');
 
 var app = express();
 var PORT = process.env.PORT || 3000;
-var token = '***REMOVED***'
-	+'***REMOVED***'
-	+'***REMOVED***';
-
+var FB_TOKEN = process.env.FACEBOOK_PAGE_TOKEN;
+var VERIFY_TOKEN = process.env.HUB_VERIFY_TOKEN;
 app.use(bodyParser.json()); 
 app.use(bodyParser.urlencoded({ extended: true })); 
 
 //ROUTES
 app.get('/webhook/', function (req, res) {
-  if (req.query['hub.verify_token'] === '***REMOVED***') {
+  if (req.query['hub.verify_token'] === VERIFY_TOKEN) {
     res.send(req.query['hub.challenge']);
   }
   res.send('Error, wrong validation token');
@@ -47,7 +45,7 @@ app.post('/webhook/', function (req, res) {
 
 
 app.get('/init', function(req, res){
-	var url = 'https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=' + token;
+	var url = 'https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=' + FBTOKEN;
 	request(url, function(error, response, body){
 		if(!error){
 			res.send(body);
